@@ -108,4 +108,4 @@ class LogisticRegression:
         z = x @ self.W + self.B
         p = self.sigmoid(z)
 
-        return (p >= 0.5).astype(int)
+        return (p >= 0.5).astype(int), np.round(p, 2)
