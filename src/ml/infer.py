@@ -1,5 +1,6 @@
 import pandas as pd
 
+from ml.error import MSE
 from ml.models import LinearRegression
 
 data = pd.read_csv(
@@ -18,3 +19,7 @@ linear = LinearRegression()
 linear.fit(x_train, y_train, 5000, lr=1e-3)
 
 print(linear.B, linear.W)
+
+predictions = linear.predict(x_test)
+
+print(MSE(y_test, predictions))

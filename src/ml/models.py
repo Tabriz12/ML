@@ -1,12 +1,6 @@
 import numpy as np
 import pandas as pd
 
-# from sklearn.linear_model import LogisticRegression
-# def mse()
-
-
-# ((X[i] * W + B) - y)^2
-
 
 class LinearRegression:
     def __init__(self):
@@ -28,7 +22,7 @@ class LinearRegression:
         self.W = np.zeros(num_features)
 
         for epoch in range(epochs):
-            losses = x @ self.W + self.B - y  # (num_features, 1)
+            losses: np.ndarray = x @ self.W + self.B - y  # (num_instances, 1)
 
             dl_dw = (x.T @ losses) / datalen
 
@@ -39,7 +33,7 @@ class LinearRegression:
 
             print(f"Epoch {epoch + 1}/{epochs} with loss {(losses**2).mean()}")
 
-    def predict(self, X: pd.DataFrame):
+    def predict(self, X: pd.DataFrame, y_true: pd.Series | None = None):
 
         if self.W is None:
             raise ValueError(
@@ -94,4 +88,24 @@ class LogisticRegression:
 
             loss = -np.mean(y * np.log(p + 1e-9) + (1 - y) * np.log(1 - p + 1e-9))
 
+            # print(f"Weights: {self.W}, Bias: {self.B}")
             print(f"Epoch {epoch + 1}/{epochs} loss={loss}")
+
+    def predict(self, X: pd.Series | pd.DataFrame):
+        if self.W is None:
+            raise ValueError(
+                "Model is not trained yet. Please call fit() before predict()."
+            )
+
+        x = X.to_numpy()
+
+        if x.ndim == 1:
+            x = x.reshape(-1, 1)  # (num_instances, num_features )
+
+        if x.shape[1] != self.W.shape[0]:
+            raise ValueError(f"Expected {self.W.shape[0]} features, got {x.shape[1]}")
+
+        z = x @ self.W + self.B
+        p = self.sigmoid(z)
+
+        return (p >= 0.5).astype(int)
